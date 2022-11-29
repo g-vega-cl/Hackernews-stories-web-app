@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import HatchwaysBlog from "./HatchwaysBlog";
+import Blog from "./Blog";
 import "./css/global.scss";
 
 ReactDOM.render(
   <React.StrictMode>
-    <HatchwaysBlog />
+    <Blog />
   </React.StrictMode>,
   document.getElementById("root")
 );

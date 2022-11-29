@@ -33,14 +33,12 @@ function Pagination({
   return (
     <ul
       className="wrapper"
-      // Do not modify the aria-label below, it is used for Hatchways automation.
       aria-label="Blog post pagination list"
     >
       <li className="paginationItem">
         <button
           type="button"
           className="arrowButton left"
-          // Do not modify the aria-label below, it is used for Hatchways automation.
           aria-label="Goto previous page"
           onClick={onPrevious}
           disabled={currentPage === 1} // Disable left arrow when in first page
@@ -66,7 +64,6 @@ function Pagination({
           >
             <button
               type="button"
-              // Do not modify the aria-label below, it is used for Hatchways automation.
               aria-label={`Goto page ${pageNumber}`}
               onClick={() => onPageChange(pageNumber)}
             >
@@ -80,7 +77,6 @@ function Pagination({
         <button
           type="button"
           className="arrowButton right"
-          // Do not modify the aria-label below, it is used for Hatchways automation.
           aria-label="Goto next page"
           onClick={onNext}
           disabled={calculateLastPage(totalCount, pageSize) === currentPage} // Disable if next page would be empty.
@@ -91,7 +87,6 @@ function Pagination({
 
       <select
         className="paginationSelector"
-        // Do not modify the aria-label below, it is used for Hatchways automation.
         aria-label="Select page size"
         value={pageSize}
         onChange={(e) => {
