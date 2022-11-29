@@ -2,6 +2,7 @@ import React from "react";
 import BlogList from "./components/BlogList";
 import StyledNavbar from "./components/Navbar";
 import StickySidebar from "./components/StickySidebar";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 function Blog() {
   return (
@@ -11,6 +12,7 @@ function Blog() {
         <BlogList />
         <StickySidebar />
       </div>
+      <ReactQueryDevtools initialIsOpen />
     </div>
   );
 }

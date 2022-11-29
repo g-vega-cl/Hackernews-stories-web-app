@@ -72,7 +72,7 @@ Example: https://hacker-news.firebaseio.com/v0/maxitem.json?print=pretty
 1. Create boilerplate.
 
 * Optimization Notes:
-    1. We can cache. And should cache. - Use React query library.
+    1. We can cache. And should cache. - Use React query library. (How query cache works: https://www.youtube.com/watch?v=2TX8ojaSwF0)
     2. Lazy loading? I say yes. Use pagination, show 10 articles per page. - Depends. It might add complexity to the code where it is not needed.
 2. Fetch data.
     * Fetch stories.
