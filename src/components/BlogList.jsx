@@ -33,7 +33,7 @@ function BlogList() {
     }
   );
 
-  // THIS RUNS ALL 30 ARTICLES
+  // Fetches all 30 articles
   const { isLoading: isLoadingArticles,error: articlesError, data: articles } = useQuery({
     queryKey: [`hackerNews-articles`],
     queryFn: async () => {
@@ -46,12 +46,36 @@ function BlogList() {
     // The query will not execute until the articleIds?.length > 0 is true
     enabled: articleIds?.length > 0
   });
-  
+
+
+  // 2022-11-29 - FOR TOMORROW, NEXT STEP IS TO MAKE SURE COMMENTS ARE BEING FETCHED, 
+  // Fetches all 30 articles
+  const { isLoading: isLoadingComments,error: commentsError, data: comments } = useQuery({
+    queryKey: [`hackerNews-comments`],
+    queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do N2 because we want to go through every comment.
+      return Promise.all(articles.map(async (article) => {
+        // Gets all comments.
+        return await Promise.all(article.kids.map(async (kidId) => {
+          const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${kidId}.json`);
+		      const data = res.json();
+          // WE want the top commenter names for each article. With the total number of comments they posted, we could calculate this here.
+            // BUT since we are fetching the comments anyways, I'd rather cache the comments and then calculate what we need.
+          return data;
+        }));
+      }))
+    },
+    // The query will not execute until the articleIds?.length > 0 is true
+    enabled: articles?.length > 0
+  });
+
+
   currentPaginationData = useMemo(()=>
     getPages(currentPage,rowsPerPage,articles)
   );
 
-  if (isLoadingArticles || isLoadingArticleIds) return <LoadingPage isLoadingIds={isLoadingArticleIds}/>; // THIS SHOULD BE HANDLED SOMEWHERE ELSE.
+  console.log("isLoadingComments ", isLoadingComments, " commentsError ", commentsError, "Comments ", comments);
+
+  if (isLoadingArticles || isLoadingArticleIds) return <LoadingPage isLoadingIds={isLoadingArticleIds}/>;
 
   if (articlesError) return "An error has occurred: " + error.message; // //TODO // RETURN ERROR PAGE.
 

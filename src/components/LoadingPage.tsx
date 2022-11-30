@@ -9,9 +9,9 @@ const LoadingPage = () => {
             <h2>We are loading your articles, please be patient, you will only need to wait once...</h2>
             <h3 style={{marginTop: 20 }}>Fun facts:</h3>
             <ul>
-                {funFacts.map((funFact) => {
+                {funFacts.map((funFact, index) => {
                     return(
-                        <li style={{marginTop: 10}}>
+                        <li style={{marginTop: 10}} key={`fun-fact-${index}`}>
                             <p>{funFact}</p>
                         </li>
                     )
