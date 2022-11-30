@@ -3,7 +3,6 @@ import React, {useState, useMemo} from "react";
 import { getArticles, getPages } from "./utils";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import BlogPost from './BlogPost';
 import TopStory from "./TopStory.tsx"; // TODO fix the .tsx import, not high priority
 
 const PAGE_SIZES = [5, 10, 20, 30];
@@ -15,7 +14,7 @@ function BlogList() {
   let currentPaginationData = [];
 
   const updateRowsPerPage = (rowNumber) => {
-    // When user changes “X per page” (the only options will be 15, 25, 50 and 100), 
+    // Runs when user changes “X per page”.
     // it should only display at maximum that amount of blogs per page and the first page is displayed
     setRowsPerPage(rowNumber);
     setCurrentPage(1);
@@ -42,12 +41,11 @@ function BlogList() {
         return data;
       }))
     },
-    // The query will not execute until the isLoadingArticleIds is false
+    // The query will not execute until the articleIds?.length > 0 is true
     enabled: articleIds?.length > 0
   });
-
-  // If we have data.
-  currentPaginationData = useMemo(()=>  //CHECK IF THIS RE-RENDERS EVERY TIME.
+  
+  currentPaginationData = useMemo(()=>
     getPages(currentPage,rowsPerPage,articles)
   );
 
@@ -60,7 +58,7 @@ function BlogList() {
       <Pagination
         currentPage={currentPage}
         totalCount={articles.length}
-        pageSize={rowsPerPage} // rowsPerPage is modified by the setRowsPerPage in updateRowsPerPage.
+        pageSize={rowsPerPage}
         pageSizeOptions={PAGE_SIZES}
         onPageChange={updatePage}
         onPageSizeOptionChange={updateRowsPerPage}
