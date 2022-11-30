@@ -1,9 +1,10 @@
 import Pagination from "./Pagination";
 import React, {useState, useMemo} from "react";
-import { getArticles, getPages } from "./utils";
+import { getPages } from "./utils";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import TopStory from "./TopStory.tsx"; // TODO fix the .tsx import, not high priority
+import LoadingPage from "./LoadingPage.tsx";
 
 const PAGE_SIZES = [5, 10, 20, 30];
 
@@ -50,7 +51,7 @@ function BlogList() {
     getPages(currentPage,rowsPerPage,articles)
   );
 
-  if (isLoadingArticles) return "Loading..."; // THIS SHOULD BE HANDLED SOMEWHERE ELSE.
+  if (isLoadingArticles || isLoadingArticleIds) return <LoadingPage isLoadingIds={isLoadingArticleIds}/>; // THIS SHOULD BE HANDLED SOMEWHERE ELSE.
 
   if (articlesError) return "An error has occurred: " + error.message; // //TODO // RETURN ERROR PAGE.
 

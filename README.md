@@ -96,3 +96,11 @@ How do you get react query to call data after calling data:
 https://stackoverflow.com/questions/60260704/how-to-fetch-n-dependent-data-with-react-query
 Dependent queries:
     https://tanstack.com/query/v4/docs/guides/dependent-queries?from=reactQueryV3&original=https://react-query-v3.tanstack.com/guides/dependent-queries#_top
+
+Why did you fetch all data up-front?
+    * Because I think users prefer a large(ish) wait at the beginning, and then fast navigation. I know there are articles that say that the longer the page takes to load the 
+        less conversion, but I think that users with slow internet that would like to see the top articles don't mind waiting. Think, who was really slow internet and wants to see article information?
+        And I mitigated the wait with a pretty loading animation / progress bar.
+
+Is there any further optimization to do?
+    * Decrease bundle size.
