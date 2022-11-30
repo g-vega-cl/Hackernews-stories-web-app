@@ -53,7 +53,7 @@ function BlogList() {
   );
 
   // Fetches all comments for the articles
-  const { isFetching: isFetchingComments,error: commentsError, data: comments, refetch: refetchComments } = useQuery({
+  const { error: commentsError, data: comments, refetch: refetchComments } = useQuery({
     queryKey: [`hackerNews-comments`], //Adding currentPage here blocks refetching unless currentPage changes.
     queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do O(n2) because we want to go through every comment.
       // HERE INSTEAD OF DOING .MAP you could do a for each and save the next step of map -> Object
@@ -61,7 +61,7 @@ function BlogList() {
       for(let i = 0; i < currentPaginationData.length; i++){
         const article = currentPaginationData[i];
         if(comments !== undefined && comments[article.id]){
-          return comments;
+          continue;
         }
         const articleComments = await Promise.all(article.kids.map(async (kidId) => {
           const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${kidId}.json`);
@@ -111,7 +111,7 @@ function BlogList() {
             author={article.by}
             title={article.title}
             comments={comments ? comments[article.id]: {}}
-            isFetchingComments={isFetchingComments}
+            isErrorComments={commentsError}
           />
         ))}
       </ul>

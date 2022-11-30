@@ -7,10 +7,24 @@ export interface ITopStory {
   author: string;
   title: string;
   comments: any; // BUILD COMMENTS INTERFACE.
-  isFetchingComments: boolean;
+  errorComments: any;
 };
 
-const TopStory = ({ author = "", title = "", comments = {}, isFetchingComments = false }: ITopStory) => {
+const TopComments = ({top10CommenterNames, errorComments, commentorFrequency}) => {
+
+  if(top10CommenterNames.length > 0){
+    return top10CommenterNames.map((name,index)=>{
+      return <p style={{margin: '0px 10px'}} key={`commentor-${name}-${index}`}>{name}: {commentorFrequency[name]}</p>
+    })
+  } else if(errorComments){
+    return <p style={{margin: '0px 10px'}}>Error loading commentators, </p>
+  } 
+
+  return <p style={{margin: '0px 10px'}}> Fetching commentators... </p>
+
+}
+
+const TopStory = ({ author = "", title = "", comments = {}, errorComments }: ITopStory) => {
   const {top10CommenterNames, commentorFrequency}  = getTop10CommenterNames(comments);
   return (
     <li className="blogsWrapper">
@@ -22,9 +36,7 @@ const TopStory = ({ author = "", title = "", comments = {}, isFetchingComments =
         <h2>{title}</h2>
         <div style={{display:'flex'}}>
           <p style={{fontWeight:'bold'}}>Top commentors: </p>
-          {isFetchingComments ? <p style={{margin: '0px 10px'}}> fetching... </p>: top10CommenterNames.map((name,index)=>{
-            return <p style={{margin: '0px 10px'}} key={`commentor-${name}-${index}`}>{name}: {commentorFrequency[name]}</p>
-          })}
+          {<TopComments top10CommenterNames={top10CommenterNames} errorComments={errorComments} commentorFrequency={commentorFrequency}/>}
         </div>
       </div>
     </li>
