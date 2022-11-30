@@ -25,12 +25,13 @@ function BlogList() {
   };
 
   // This is cached and saved locally for 24h
-  const { isLoading: isLoadingArticleIds, error: errorArticleIds, data: articleIds } = useQuery(["hackerNews-article-ids"], () => {
+  const { isLoading: isLoadingArticleIds, error: errorArticleIds, data: articleIds } = useQuery({queryKey:["hackerNews-article-ids"], queryFn:() => {
     return axios
       .get("https://hacker-news.firebaseio.com/v0/beststories.json?print=pretty&orderBy=%22$key%22&limitToFirst=30")
       .then((res) => res.data)
-    }
-  );
+    },
+    refetchOnWindowFocus: false,
+  });
 
   // Fetches all 30 articles
   const { isLoading: isLoadingArticles,error: articlesError, data: articles } = useQuery({
@@ -43,7 +44,8 @@ function BlogList() {
       }))
     },
     // The query will not execute until the articleIds?.length > 0 is true
-    enabled: articleIds?.length > 0
+    enabled: articleIds?.length > 0,
+    refetchOnWindowFocus: false,
   });
 
   currentPaginationData = useMemo(()=>
@@ -52,12 +54,15 @@ function BlogList() {
 
   // Fetches all comments for the articles
   const { isLoading: isLoadingComments,error: commentsError, data: comments, refetch: refetchComments } = useQuery({
-    queryKey: [`hackerNews-comments`],
+    queryKey: [`hackerNews-comments`], //Adding currentPage here blocks refetching unless currentPage changes.
     queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do O(n2) because we want to go through every comment.
       // HERE INSTEAD OF DOING .MAP you could do a for each and save the next step of map -> Object
       const articlesWithComments = {};
       for(let i = 0; i < currentPaginationData.length; i++){
         const article = currentPaginationData[i];
+        if(comments !== undefined && comments[article.id]){
+          return comments;
+        }
         const articleComments = await Promise.all(article.kids.map(async (kidId) => {
           const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${kidId}.json`);
 		      const data = res.json();
