@@ -27,10 +27,14 @@ export const getPageSiblings = (currentPage, lastPage) => {
 export const getTop10CommenterNames = (comments) => {
     //Could optimize by adding conditions like:
         // If the 10th most frequent comment commented 10 times, and there are 9 items left, stop.
+    if(Object.keys(comments).length === 0) {
+        return {top10CommenterNames: [], commentorFrequency: {}}
+    }
     const commentorFrequency = {};
-    Object.keys(comments).forEach((commentId) => {
-        const comment = comments[commentId];
-        console.log("Comment", comment);
+    comments.forEach((comment) => {
+        if(comment?.deleted){
+            return;
+        }
         if(commentorFrequency[comment.by]){
             commentorFrequency[comment.by]++;
          }else{
@@ -38,8 +42,8 @@ export const getTop10CommenterNames = (comments) => {
          }
     });
 
-    const sortedCommentorNames = Object.keys(commentorFrequency).sort(function(a,b){return commentorFrequency[a]-commentorFrequency[b]})
-    console.log("sortedCommentorNames", sortedCommentorNames);     // bar,me,you,foo
+
+    const sortedCommentorNames = Object.keys(commentorFrequency).sort(function(a,b){return commentorFrequency[b]-commentorFrequency[a]})
     // ONLY RETURN TOP 10.
-    return sortedCommentorNames.slice(0,10);
+    return {top10CommenterNames: sortedCommentorNames.slice(0,10), commentorFrequency: commentorFrequency};
 }

@@ -55,7 +55,7 @@ function BlogList() {
     queryKey: [`hackerNews-comments`],
     queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do O(n2) because we want to go through every comment.
       // HERE INSTEAD OF DOING .MAP you could do a for each and save the next step of map -> Object
-      const articleObject = {};
+      const articlesWithComments = {};
       for(let i = 0; i < currentPaginationData.length; i++){
         const article = currentPaginationData[i];
         const articleComments = await Promise.all(article.kids.map(async (kidId) => {
@@ -63,33 +63,20 @@ function BlogList() {
 		      const data = res.json();
           // WE want the top commenter names for each article. With the total number of comments they posted, we could calculate this here.
             // BUT since we are fetching the comments anyways, I'd rather cache the comments and then calculate what we need.
+            console.log("query");
           return data;
         }));
-        articleObject[article.id] = articleComments;
+        articlesWithComments[article.id] = articleComments;
       }
-      console.log("articleObject", articleObject);
-      return articleObject;
-
-      // const commentsArray = Promise.all(currentPaginationData.map(async (article) => {
-      //   // Gets all comments. NOTE: Can be rate limited.
-      //   const articleComments = await Promise.all(article.kids.map(async (kidId) => {
-      //     const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${kidId}.json`);
-		  //     const data = res.json();
-      //     // WE want the top commenter names for each article. With the total number of comments they posted, we could calculate this here.
-      //       // BUT since we are fetching the comments anyways, I'd rather cache the comments and then calculate what we need.
-      //     return data;
-      //   }));
-
-      //   const articleObject = {};
-      //   articleObject[article["id"]] = articleComments;
-      //   return articleObject;
-      // }))
+      return articlesWithComments;
     },
     // The query will not execute until the articleIds?.length > 0 is true
     enabled: currentPaginationData?.length > 0
   });
 
-  console.log("isLoadingComments ", isLoadingComments, " commentsError ", commentsError, "Comments ", comments);
+  comments["val"] = "IM A VALUE"; // USE THIS TO PERSIST IN QUERY.
+
+  console.log("comments", comments);
 
   if (isLoadingArticles || isLoadingArticleIds) return <LoadingPage isLoadingIds={isLoadingArticleIds}/>;
 
@@ -108,14 +95,14 @@ function BlogList() {
       <ul
         aria-label="blog list"
       >
-        {/* {currentPaginationData.map((article) => (
+        {currentPaginationData.map((article) => (
           <TopStory
             key={article.id}
             author={article.by}
             title={article.title}
-            comments={comments[article.id]}
+            comments={comments ? comments[article.id]: {}}
           />
-        ))} */}
+        ))}
       </ul>
     </div>
   );

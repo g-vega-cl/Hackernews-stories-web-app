@@ -10,9 +10,7 @@ export interface ITopStory {
 };
 
 const TopStory = ({ author = "", title = "", comments = {} }: ITopStory) => {
-  console.log("ArticleComments", comments);
-  const top10CommenterNames = getTop10CommenterNames(comments);
-  console.log("top10CommenterNames", top10CommenterNames);
+  const {top10CommenterNames, commentorFrequency}  = getTop10CommenterNames(comments);
   return (
     <li className="blogsWrapper">
       <div className="blog">
@@ -21,7 +19,12 @@ const TopStory = ({ author = "", title = "", comments = {} }: ITopStory) => {
         </div>
 
         <h2>{title}</h2>
-        <p className="excerpt">{}</p>
+        <div style={{display:'flex'}}>
+          <p style={{fontWeight:'bold'}}>Top commentors: </p>
+          {top10CommenterNames.map((name,index)=>{
+            return <p style={{margin: '0px 10px'}} key={`commentor-${name}-${index}`}>{name}: {commentorFrequency[name]}</p>
+          })}
+        </div>
       </div>
     </li>
   );
