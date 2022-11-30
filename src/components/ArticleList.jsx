@@ -8,7 +8,7 @@ import LoadingPage from "./LoadingPage.tsx";
 
 const PAGE_SIZES = [3, 5, 10];
 
-function BlogList() {
+function ArticleList() {
   const [rowsPerPage, setRowsPerPage] = useState(PAGE_SIZES[0]);
   const [currentPage, setCurrentPage] = useState(1);
   let currentPaginationData = [];
@@ -119,4 +119,4 @@ function BlogList() {
   );
 }
 
-export default BlogList;
+export default ArticleList;

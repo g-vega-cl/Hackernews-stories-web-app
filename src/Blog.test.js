@@ -24,8 +24,8 @@ test("Next button should exist", async () => {
 
 test("First 15 posts should be rendered by default", async () => {
   render(<Blog />);
-  const blogList = screen.getByRole("list", { name: "blog list" });
-  const blogItems = within(blogList).getAllByRole("listitem");
+  const ArticleList = screen.getByRole("list", { name: "blog list" });
+  const blogItems = within(ArticleList).getAllByRole("listitem");
 
   expect(blogItems).toHaveLength(15);
 
@@ -51,8 +51,8 @@ test("Changing page size from 15 to 25 should render 25 posts", async () => {
 
   await user.selectOptions(pageSizeMenu, "25");
 
-  const blogList = screen.getByRole("list", { name: "blog list" });
-  const blogItems = within(blogList).getAllByRole("listitem");
+  const ArticleList = screen.getByRole("list", { name: "blog list" });
+  const blogItems = within(ArticleList).getAllByRole("listitem");
 
   expect(blogItems).toHaveLength(25);
 

@@ -1,5 +1,5 @@
 import React from "react";
-import BlogList from "./components/BlogList";
+import ArticleList from "./components/ArticleList";
 import StyledNavbar from "./components/Navbar";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -8,7 +8,7 @@ function Blog() {
     <div style={{ margin: "auto", width: "93%"}}>
       <StyledNavbar />
       <div style={{ marginTop: 30, display: "flex" }}>
-        <BlogList />
+        <ArticleList />
       </div>
       <ReactQueryDevtools initialIsOpen />
     </div>
