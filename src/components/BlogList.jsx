@@ -32,6 +32,7 @@ function BlogList() {
     }
   );
 
+  // THIS RUNS ALL 30 ARTICLES
   const { isLoading: isLoadingArticles,error: articlesError, data: articles } = useQuery({
     queryKey: [`hackerNews-articles`],
     queryFn: async () => {
