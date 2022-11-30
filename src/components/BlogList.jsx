@@ -53,7 +53,7 @@ function BlogList() {
   );
 
   // Fetches all comments for the articles
-  const { isLoading: isLoadingComments,error: commentsError, data: comments, refetch: refetchComments } = useQuery({
+  const { isFetching: isFetchingComments,error: commentsError, data: comments, refetch: refetchComments } = useQuery({
     queryKey: [`hackerNews-comments`], //Adding currentPage here blocks refetching unless currentPage changes.
     queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do O(n2) because we want to go through every comment.
       // HERE INSTEAD OF DOING .MAP you could do a for each and save the next step of map -> Object
@@ -111,6 +111,7 @@ function BlogList() {
             author={article.by}
             title={article.title}
             comments={comments ? comments[article.id]: {}}
+            isFetchingComments={isFetchingComments}
           />
         ))}
       </ul>

@@ -7,9 +7,10 @@ export interface ITopStory {
   author: string;
   title: string;
   comments: any; // BUILD COMMENTS INTERFACE.
+  isFetchingComments: boolean;
 };
 
-const TopStory = ({ author = "", title = "", comments = {} }: ITopStory) => {
+const TopStory = ({ author = "", title = "", comments = {}, isFetchingComments = false }: ITopStory) => {
   const {top10CommenterNames, commentorFrequency}  = getTop10CommenterNames(comments);
   return (
     <li className="blogsWrapper">
@@ -21,7 +22,7 @@ const TopStory = ({ author = "", title = "", comments = {} }: ITopStory) => {
         <h2>{title}</h2>
         <div style={{display:'flex'}}>
           <p style={{fontWeight:'bold'}}>Top commentors: </p>
-          {top10CommenterNames.map((name,index)=>{
+          {isFetchingComments ? <p style={{margin: '0px 10px'}}> fetching... </p>: top10CommenterNames.map((name,index)=>{
             return <p style={{margin: '0px 10px'}} key={`commentor-${name}-${index}`}>{name}: {commentorFrequency[name]}</p>
           })}
         </div>
