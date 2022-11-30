@@ -1,6 +1,5 @@
 import "../css/blogs.scss";
 import { getTop10CommenterNames } from "./utils";
-import PropTypes from "prop-types";
 import React from "react";
 
 export interface ITopStory {

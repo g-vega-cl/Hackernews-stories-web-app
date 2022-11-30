@@ -1,8 +1,6 @@
 import Pagination from "./Pagination";
 import React, {useState, useMemo, useEffect} from "react";
 import { getPages } from "./utils";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import TopStory from "./TopStory.tsx"; // TODO fix the .tsx import, not high priority
 import LoadingPage from "./LoadingPage.tsx";
 import { getArticlesAPI, getCommentsAPI } from "./Api.tsx";
