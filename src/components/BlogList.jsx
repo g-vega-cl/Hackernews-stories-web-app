@@ -111,7 +111,7 @@ function BlogList() {
             author={article.by}
             title={article.title}
             comments={comments ? comments[article.id]: {}}
-            isErrorComments={commentsError}
+            isErrorComments={commentsError?.message}
           />
         ))}
       </ul>

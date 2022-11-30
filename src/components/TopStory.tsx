@@ -7,7 +7,7 @@ export interface ITopStory {
   author: string;
   title: string;
   comments: any; // BUILD COMMENTS INTERFACE.
-  errorComments: any;
+  errorComments: string;
 };
 
 const TopComments = ({top10CommenterNames, errorComments, commentorFrequency}) => {
@@ -17,7 +17,7 @@ const TopComments = ({top10CommenterNames, errorComments, commentorFrequency}) =
       return <p style={{margin: '0px 10px'}} key={`commentor-${name}-${index}`}>{name}: {commentorFrequency[name]}</p>
     })
   } else if(errorComments){
-    return <p style={{margin: '0px 10px'}}>Error loading commentators, </p>
+    return <p style={{margin: '0px 10px'}}>Error loading commentators, {errorComments} </p>
   } 
 
   return <p style={{margin: '0px 10px'}}> Fetching commentators... </p>
