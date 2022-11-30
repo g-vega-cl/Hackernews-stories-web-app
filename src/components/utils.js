@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+
 export const getBlogPagesIndex = (currentPage, rowsPerPage) => {
     const indexes = {
       firstPostIndex: (currentPage-1)*rowsPerPage,
@@ -6,7 +8,7 @@ export const getBlogPagesIndex = (currentPage, rowsPerPage) => {
     return indexes
 }
 
-export const getBlogPages = (currentPage,rowsPerPage, blogs) => {
+export const getPages = (currentPage,rowsPerPage, blogs) => {
     return blogs.posts.slice(getBlogPagesIndex(currentPage,rowsPerPage).firstPostIndex, getBlogPagesIndex(currentPage,rowsPerPage).lastPostIndex);
 }
 

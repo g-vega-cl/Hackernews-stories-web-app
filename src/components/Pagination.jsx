@@ -2,11 +2,10 @@ import "../css/pagination.scss";
 
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
 import usePagination, { DOTS } from "../hooks/usePagination";
-import { calculateLastPage, getBlogPagesIndex } from "./utils";
+import { calculateLastPage, getPagesIndex } from "./utils";
 
 import PropTypes from "prop-types";
 import React, {useMemo} from "react";
-import { nanoid } from "nanoid";
 
 function Pagination({
   onPageChange,

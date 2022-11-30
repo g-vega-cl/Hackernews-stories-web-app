@@ -7,10 +7,10 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 function Blog() {
   return (
     <div style={{ margin: "0 auto", width: "100%", padding: 20 }}>
-      <StyledNavbar />
+      {/* <StyledNavbar /> */}
       <div style={{ marginTop: 60, display: "flex" }}>
         <BlogList />
-        <StickySidebar />
+        {/* <StickySidebar /> */}
       </div>
       <ReactQueryDevtools initialIsOpen />
     </div>

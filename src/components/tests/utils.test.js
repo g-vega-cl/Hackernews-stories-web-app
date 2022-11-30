@@ -1,4 +1,4 @@
-import {calculateLastPage, getPageSiblings, getBlogPagesIndex} from '../utils';
+import {calculateLastPage, getPageSiblings, getPagesIndex} from '../utils';
 
 describe('Utility functions should work as intended',() => {
     it('calculateLastPage should return the last page', () => {
@@ -22,16 +22,16 @@ describe('Utility functions should work as intended',() => {
         });
     });
 
-    it('getBlogPagesIndex should return appropiate blog pages', () => {
-        expect(getBlogPagesIndex(3,100)).toStrictEqual({
+    it('getPagesIndex should return appropiate blog pages', () => {
+        expect(getPagesIndex(3,100)).toStrictEqual({
             firstPostIndex: 200,
             lastPostIndex: 300,
         });
-        expect(getBlogPagesIndex(5,15)).toStrictEqual({
+        expect(getPagesIndex(5,15)).toStrictEqual({
             firstPostIndex: 60,
             lastPostIndex: 75,
         });
-        expect(getBlogPagesIndex(3,50)).toStrictEqual({
+        expect(getPagesIndex(3,50)).toStrictEqual({
             firstPostIndex: 100,
             lastPostIndex: 150,
         });

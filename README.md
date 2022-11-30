@@ -89,3 +89,10 @@ Example: https://hacker-news.firebaseio.com/v0/maxitem.json?print=pretty
     
 
 3. Display data.
+
+
+# FAQ
+How do you get react query to call data after calling data:
+https://stackoverflow.com/questions/60260704/how-to-fetch-n-dependent-data-with-react-query
+Dependent queries:
+    https://tanstack.com/query/v4/docs/guides/dependent-queries?from=reactQueryV3&original=https://react-query-v3.tanstack.com/guides/dependent-queries#_top
