@@ -1,4 +1,5 @@
-import {calculateLastPage, getPageSiblings, getPagesIndex} from '../utils';
+import {calculateLastPage, getPageSiblings, getPagesIndex, getTop10CommenterNames} from '../utils';
+import { mockComments } from './comments.mock.ts';
 
 describe('Utility functions should work as intended',() => {
     it('calculateLastPage should return the last page', () => {
@@ -34,6 +35,27 @@ describe('Utility functions should work as intended',() => {
         expect(getPagesIndex(3,50)).toStrictEqual({
             firstPostIndex: 100,
             lastPostIndex: 150,
+        });
+    });
+
+    it('getTop10CommentorsNames should the top commentors names', () => {
+        const {top10CommenterNames, commentorFrequency} = getTop10CommenterNames(mockComments);
+        expect(top10CommenterNames).toStrictEqual(['kajaktum','psychphysic','helf','punnerud','grappler','fareesh','calrizien', 'adultSwim','gfody','rafale']);
+        expect(commentorFrequency).toStrictEqual({
+            kajaktum: 3,
+            helf: 2,
+            psychphysic: 3,
+            punnerud: 1,
+            grappler: 1,
+            fareesh: 1,
+            calrizien: 1,
+            adultSwim: 1,
+            gfody: 1,
+            rafale: 1,
+            hias: 1,
+            tiahura: 1,
+            neonsunset: 1,
+            '2OEH8eoCRo0': 1
         });
     });
 })

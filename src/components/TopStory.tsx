@@ -23,7 +23,7 @@ const TopComments = ({top10CommenterNames, errorComments, commentorFrequency}) =
 
 }
 
-const TopStory = ({ author = "", title = "", comments = {}, errorComments }: ITopStory) => {
+const TopStory = ({ author = "", title = "", comments = [], errorComments }: ITopStory) => {
   const {top10CommenterNames, commentorFrequency}  = getTop10CommenterNames(comments);
   return (
     <li className="blogsWrapper">
