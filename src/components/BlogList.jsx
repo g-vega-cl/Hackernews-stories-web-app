@@ -6,8 +6,7 @@ import axios from "axios";
 import TopStory from "./TopStory.tsx"; // TODO fix the .tsx import, not high priority
 import LoadingPage from "./LoadingPage.tsx";
 
-const PAGE_SIZES = [5, 10, 20, 30];
-
+const PAGE_SIZES = [3, 5, 10];
 
 function BlogList() {
   const [rowsPerPage, setRowsPerPage] = useState(PAGE_SIZES[0]);
@@ -47,31 +46,48 @@ function BlogList() {
     enabled: articleIds?.length > 0
   });
 
+  currentPaginationData = useMemo(()=>
+    getPages(currentPage,rowsPerPage,articles)
+  );
 
-  // 2022-11-29 - FOR TOMORROW, NEXT STEP IS TO MAKE SURE COMMENTS ARE BEING FETCHED, 
-  // Fetches all 30 articles
+  // Fetches all comments for the articles
   const { isLoading: isLoadingComments,error: commentsError, data: comments } = useQuery({
     queryKey: [`hackerNews-comments`],
-    queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do N2 because we want to go through every comment.
-      return Promise.all(articles.map(async (article) => {
-        // Gets all comments.
-        return await Promise.all(article.kids.map(async (kidId) => {
+    queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do O(n2) because we want to go through every comment.
+      // HERE INSTEAD OF DOING .MAP you could do a for each and save the next step of map -> Object
+      const articleObject = {};
+      for(let i = 0; i < currentPaginationData.length; i++){
+        const article = currentPaginationData[i];
+        const articleComments = await Promise.all(article.kids.map(async (kidId) => {
           const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${kidId}.json`);
 		      const data = res.json();
           // WE want the top commenter names for each article. With the total number of comments they posted, we could calculate this here.
             // BUT since we are fetching the comments anyways, I'd rather cache the comments and then calculate what we need.
           return data;
         }));
-      }))
+        articleObject[article.id] = articleComments;
+      }
+      console.log("articleObject", articleObject);
+      return articleObject;
+
+      // const commentsArray = Promise.all(currentPaginationData.map(async (article) => {
+      //   // Gets all comments. NOTE: Can be rate limited.
+      //   const articleComments = await Promise.all(article.kids.map(async (kidId) => {
+      //     const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${kidId}.json`);
+		  //     const data = res.json();
+      //     // WE want the top commenter names for each article. With the total number of comments they posted, we could calculate this here.
+      //       // BUT since we are fetching the comments anyways, I'd rather cache the comments and then calculate what we need.
+      //     return data;
+      //   }));
+
+      //   const articleObject = {};
+      //   articleObject[article["id"]] = articleComments;
+      //   return articleObject;
+      // }))
     },
     // The query will not execute until the articleIds?.length > 0 is true
-    enabled: articles?.length > 0
+    enabled: currentPaginationData?.length > 0
   });
-
-
-  currentPaginationData = useMemo(()=>
-    getPages(currentPage,rowsPerPage,articles)
-  );
 
   console.log("isLoadingComments ", isLoadingComments, " commentsError ", commentsError, "Comments ", comments);
 
@@ -92,14 +108,14 @@ function BlogList() {
       <ul
         aria-label="blog list"
       >
-        {currentPaginationData.map((article) => (
+        {/* {currentPaginationData.map((article) => (
           <TopStory
             key={article.id}
             author={article.by}
             title={article.title}
-            comments={{}}
+            comments={comments[article.id]}
           />
-        ))}
+        ))} */}
       </ul>
     </div>
   );

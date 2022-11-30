@@ -104,3 +104,6 @@ Why did you fetch all data up-front?
 
 Is there any further optimization to do?
     * Decrease bundle size.
+    * If we wanted to fetch more data,
+        1. Have your own server.
+        2. Create a background process that throttles requests and fetches and chaches continiously.
