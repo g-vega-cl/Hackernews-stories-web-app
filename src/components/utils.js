@@ -8,8 +8,10 @@ export const getBlogPagesIndex = (currentPage, rowsPerPage) => {
     return indexes
 }
 
-export const getPages = (currentPage,rowsPerPage, blogs) => {
-    return blogs.posts.slice(getBlogPagesIndex(currentPage,rowsPerPage).firstPostIndex, getBlogPagesIndex(currentPage,rowsPerPage).lastPostIndex);
+export const getPages = (currentPage,rowsPerPage, articles) => {
+    if(!articles || articles.length === 0) return [];
+    
+    return articles.slice(getBlogPagesIndex(currentPage,rowsPerPage).firstPostIndex, getBlogPagesIndex(currentPage,rowsPerPage).lastPostIndex);
 }
 
 export const calculateLastPage = (totalCount, pageSize) => {

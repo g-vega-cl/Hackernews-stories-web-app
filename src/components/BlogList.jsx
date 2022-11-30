@@ -1,6 +1,5 @@
 import Pagination from "./Pagination";
 import React, {useState, useMemo} from "react";
-import blogs from "../data/blogs.json";
 import { getArticles, getPages } from "./utils";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -11,8 +10,8 @@ const PAGE_SIZES = [5, 10, 20, 30];
 
 
 function BlogList() {
-  // const [rowsPerPage, setRowsPerPage] = useState(PAGE_SIZES[0]);
-  // const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(PAGE_SIZES[0]);
+  const [currentPage, setCurrentPage] = useState(1);
   let currentPaginationData = [];
 
   const updateRowsPerPage = (rowNumber) => {
@@ -34,7 +33,7 @@ function BlogList() {
     }
   );
 
-  const { isLoading: isLoadingArticle,error: articleError, data: article } = useQuery({
+  const { isLoading: isLoadingArticles,error: articlesError, data: articles } = useQuery({
     queryKey: [`hackerNews-articles`],
     queryFn: async () => {
       return await Promise.all(articleIds.map(async (id) => {
@@ -45,45 +44,38 @@ function BlogList() {
     },
     // The query will not execute until the isLoadingArticleIds is false
     enabled: articleIds?.length > 0
-  })
-
-
-  // currentPaginationData = getArticles(data);
-
-  if (isLoadingArticleIds) return "Loading..."; // THIS SHOULD BE HANDLED SOMEWHERE ELSE.
-
-  if (errorArticleIds) return "An error has occurred: " + error.message; // //TODO // RETURN ERROR PAGE.
-
-  
-  // console.log("isLoadingArticle", isLoadingArticle, " article", article);
-  console.log("refresh");
+  });
 
   // If we have data.
-  // currentPaginationData = useMemo(()=>  //CHECK IF THIS RE-RENDERS EVERY TIME.
-  //   getPages(currentPage,rowsPerPage,data)
-  // );
+  currentPaginationData = useMemo(()=>  //CHECK IF THIS RE-RENDERS EVERY TIME.
+    getPages(currentPage,rowsPerPage,articles)
+  );
+
+  if (isLoadingArticles) return "Loading..."; // THIS SHOULD BE HANDLED SOMEWHERE ELSE.
+
+  if (articlesError) return "An error has occurred: " + error.message; // //TODO // RETURN ERROR PAGE.
 
   return (
     <div>
-      {/* <Pagination
+      <Pagination
         currentPage={currentPage}
-        totalCount={blogs.posts.length}
+        totalCount={articles.length}
         pageSize={rowsPerPage} // rowsPerPage is modified by the setRowsPerPage in updateRowsPerPage.
         pageSizeOptions={PAGE_SIZES}
         onPageChange={updatePage}
         onPageSizeOptionChange={updateRowsPerPage}
-      /> */}
+      />
       <ul
         aria-label="blog list"
       >
-        {/* {currentPaginationData.map((blog) => (
-          <BlogPost
-            key={blog.id}
-            author={blog.author}
-            title={blog.title}
-            excerpt={blog.excerpt}
+        {currentPaginationData.map((article) => (
+          <TopStory
+            key={article.id}
+            author={article.by}
+            title={article.title}
+            comments={{}}
           />
-        ))} */}
+        ))}
       </ul>
     </div>
   );

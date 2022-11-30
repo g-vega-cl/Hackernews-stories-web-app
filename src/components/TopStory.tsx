@@ -6,24 +6,19 @@ import React from "react";
 export interface ITopStory {
   author: string;
   title: string;
-  excerpt: string;
+  comments: {};
 };
 
-const TopStory = ({ author = "", title = "", excerpt = "" }: ITopStory) => {
+const TopStory = ({ author = "", title = "", comments = {} }: ITopStory) => {
   return (
     <li className="blogsWrapper">
       <div className="blog">
         <div className="imageWrapper">
-          <img
-            className="authorImage"
-            src={`https://joeschmoe.io/api/v1/${author}`}
-            alt="Author"
-          />
           <p>{author}</p>
         </div>
 
         <h2>{title}</h2>
-        <p className="excerpt">{excerpt}</p>
+        <p className="excerpt">{}</p>
       </div>
     </li>
   );
