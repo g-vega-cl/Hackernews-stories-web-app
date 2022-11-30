@@ -1,5 +1,5 @@
 import Pagination from "./Pagination";
-import React, {useState, useMemo} from "react";
+import React, {useState, useMemo, useEffect} from "react";
 import { getPages } from "./utils";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -51,7 +51,7 @@ function BlogList() {
   );
 
   // Fetches all comments for the articles
-  const { isLoading: isLoadingComments,error: commentsError, data: comments } = useQuery({
+  const { isLoading: isLoadingComments,error: commentsError, data: comments, refetch: refetchComments } = useQuery({
     queryKey: [`hackerNews-comments`],
     queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do O(n2) because we want to go through every comment.
       // HERE INSTEAD OF DOING .MAP you could do a for each and save the next step of map -> Object
@@ -63,20 +63,25 @@ function BlogList() {
 		      const data = res.json();
           // WE want the top commenter names for each article. With the total number of comments they posted, we could calculate this here.
             // BUT since we are fetching the comments anyways, I'd rather cache the comments and then calculate what we need.
-            console.log("query");
           return data;
         }));
+
         articlesWithComments[article.id] = articleComments;
       }
-      return articlesWithComments;
+      if(comments !== undefined){
+        return {...comments, ...articlesWithComments}
+      } else {
+        return articlesWithComments;
+      }
     },
     // The query will not execute until the articleIds?.length > 0 is true
     enabled: currentPaginationData?.length > 0
   });
 
-  comments["val"] = "IM A VALUE"; // USE THIS TO PERSIST IN QUERY.
 
-  console.log("comments", comments);
+  useEffect(() => {
+    refetchComments();
+  },[currentPage, rowsPerPage]);
 
   if (isLoadingArticles || isLoadingArticleIds) return <LoadingPage isLoadingIds={isLoadingArticleIds}/>;
 
