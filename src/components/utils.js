@@ -42,8 +42,8 @@ export const getTop10CommenterNames = (comments) => {
          }
     });
 
-
+    
     const sortedCommentorNames = Object.keys(commentorFrequency).sort(function(a,b){return commentorFrequency[b]-commentorFrequency[a]})
-    // ONLY RETURN TOP 10.
+    // Return top 10
     return {top10CommenterNames: sortedCommentorNames.slice(0,10), commentorFrequency: commentorFrequency};
 }

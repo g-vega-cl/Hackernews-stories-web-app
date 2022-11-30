@@ -1,9 +1,10 @@
 import Pagination from "./Pagination";
 import React, {useState, useMemo, useEffect} from "react";
 import { getPages } from "./utils";
-import TopStory from "./TopStory.tsx"; // TODO fix the .tsx import, not high priority
+import TopStory from "./TopStory.tsx";
 import LoadingPage from "./LoadingPage.tsx";
 import { getArticlesAPI, getCommentsAPI } from "./Api.tsx";
+import ErrorPage from "./ErrorPage.tsx";
 
 const PAGE_SIZES = [3, 5, 10];
 
@@ -40,7 +41,7 @@ function ArticleList() {
 
   if (isLoadingArticles || isLoadingArticleIds) return <LoadingPage isLoadingIds={isLoadingArticleIds}/>;
 
-  if (articlesError) return "An error has occurred: " + error.message; // //TODO // RETURN ERROR PAGE.
+  if (articlesError) return <ErrorPage errorMessage = {articlesError}/>
 
   return (
     <div>

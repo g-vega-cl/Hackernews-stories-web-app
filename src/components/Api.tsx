@@ -21,8 +21,7 @@ export const getArticlesAPI = () => {
         return data;
       }))
     },
-    // The query will not execute until the articleIds?.length > 0 is true
-    enabled: articleIds?.length > 0,
+    enabled: articleIds?.length > 0, // The query will not execute until the articleIds?.length > 0 is true
     refetchOnWindowFocus: false,
   });
 
@@ -32,25 +31,24 @@ export const getArticlesAPI = () => {
   }
 }
 
-export const getCommentsAPI = (currentPaginationData) => {
+//Technically this could also be used to fetch all comments inside a comment element.
+export const getCommentsAPI = (items) => {
     const { error: commentsError, data: comments, refetch: refetchComments } = useQuery({
-        queryKey: [`hackerNews-comments`], //Adding currentPage here blocks refetching unless currentPage changes.
-        queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do O(n2) because we want to go through every comment.
+        queryKey: [`hackerNews-comments`],
+        queryFn: async () => { // THIS IS O(n2). But we need O(n2) because we want to go through every comment in every item.
         const articlesWithComments = {};
-        for(let i = 0; i < currentPaginationData.length; i++){
-            const article = currentPaginationData[i];
-            if(comments !== undefined && comments[article.id]){
-            continue;
+        for(let i = 0; i < items.length; i++){
+            const item = items[i];
+            if(comments !== undefined && comments[item.id]){
+                continue;
             }
-            const articleComments = await Promise.all(article.kids.map(async (kidId) => {
-            const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${kidId}.json`);
+            const articleComments = await Promise.all(item.kids.map(async (kidId) => {
+                const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${kidId}.json`);
                 const data = res.json();
-            // WE want the top commenter names for each article. With the total number of comments they posted, we could calculate this here.
-                // BUT since we are fetching the comments anyways, I'd rather cache the comments and then calculate what we need.
-            return data;
+                return data;
             }));
 
-            articlesWithComments[article.id] = articleComments;
+            articlesWithComments[item.id] = articleComments;
         }
         if(comments !== undefined){
             return {...comments, ...articlesWithComments}
@@ -58,7 +56,7 @@ export const getCommentsAPI = (currentPaginationData) => {
             return articlesWithComments;
         }
         },
-        enabled: currentPaginationData?.length > 0 // The query will not execute until the articleIds?.length > 0 is true
+        enabled: items?.length > 0 // The query will not execute until the articleIds?.length > 0 is true
     });
     return {comments, commentsError, refetchComments}
 }

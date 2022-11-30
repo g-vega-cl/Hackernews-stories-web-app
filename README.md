@@ -107,5 +107,6 @@ Is there any further optimization to do?
     * If we wanted to fetch more data,
         1. Have your own server.
         2. Create a background process that throttles requests and fetches and chaches continiously.
+    * Configure webpack to fix the automatic .tsx import.
 
 Limitations. Some comments also have kids of their own, I would need to create a function that also fetches and counts and caches those kids, and those kids kids. I don't wanna. Just top-level comments.

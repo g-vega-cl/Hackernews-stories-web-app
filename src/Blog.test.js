@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 
-import Blog from "./Blog";
+import Blog from "./Page";
 import blogs from "./data/blogs.json";
 import userEvent from "@testing-library/user-event";
 
