@@ -38,6 +38,8 @@ const Page = () => {
     refetchComments();
   },[currentPage, rowsPerPage]);
 
+  console.log("currentPaginationData", currentPaginationData)
+
   if (isLoadingArticles || isLoadingArticleIds) return <LoadingPage isLoadingIds={isLoadingArticleIds}/>;
 
   if (articlesError) return <ErrorPage errorMessage = {articlesError}/>

@@ -13,7 +13,7 @@ const ArticleList = ({articles, currentPage, rowsPerPage, updatePage, updateRows
         onPageSizeOptionChange={updateRowsPerPage}
       />
       <ul
-        aria-label="blog list"
+        aria-label="article list"
       >
         {currentPaginationData.map((article) => (
           <TopStory
