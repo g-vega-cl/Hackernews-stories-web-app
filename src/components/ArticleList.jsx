@@ -37,7 +37,6 @@ function ArticleList() {
   const { error: commentsError, data: comments, refetch: refetchComments } = useQuery({
     queryKey: [`hackerNews-comments`], //Adding currentPage here blocks refetching unless currentPage changes.
     queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do O(n2) because we want to go through every comment.
-      // HERE INSTEAD OF DOING .MAP you could do a for each and save the next step of map -> Object
       const articlesWithComments = {};
       for(let i = 0; i < currentPaginationData.length; i++){
         const article = currentPaginationData[i];
@@ -60,8 +59,7 @@ function ArticleList() {
         return articlesWithComments;
       }
     },
-    // The query will not execute until the articleIds?.length > 0 is true
-    enabled: currentPaginationData?.length > 0
+    enabled: currentPaginationData?.length > 0 // The query will not execute until the articleIds?.length > 0 is true
   });
 
 
