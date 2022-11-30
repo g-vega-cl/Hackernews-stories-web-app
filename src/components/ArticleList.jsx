@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import TopStory from "./TopStory.tsx"; // TODO fix the .tsx import, not high priority
 import LoadingPage from "./LoadingPage.tsx";
-import { getDataAPI } from "./Api.tsx";
+import { getArticlesAPI, getCommentsAPI } from "./Api.tsx";
 
 const PAGE_SIZES = [3, 5, 10];
 
@@ -27,40 +27,13 @@ function ArticleList() {
 
   const {
     articles, isLoadingArticles, isLoadingArticleIds, articlesError
-  } = getDataAPI();
+  } = getArticlesAPI(currentPaginationData);
 
   currentPaginationData = useMemo(()=>
     getPages(currentPage,rowsPerPage,articles)
   );
 
-  // Fetches all comments for the articles
-  const { error: commentsError, data: comments, refetch: refetchComments } = useQuery({
-    queryKey: [`hackerNews-comments`], //Adding currentPage here blocks refetching unless currentPage changes.
-    queryFn: async () => { // THIS IS O(n2). BUT WE NEED TO do O(n2) because we want to go through every comment.
-      const articlesWithComments = {};
-      for(let i = 0; i < currentPaginationData.length; i++){
-        const article = currentPaginationData[i];
-        if(comments !== undefined && comments[article.id]){
-          continue;
-        }
-        const articleComments = await Promise.all(article.kids.map(async (kidId) => {
-          const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${kidId}.json`);
-		      const data = res.json();
-          // WE want the top commenter names for each article. With the total number of comments they posted, we could calculate this here.
-            // BUT since we are fetching the comments anyways, I'd rather cache the comments and then calculate what we need.
-          return data;
-        }));
-
-        articlesWithComments[article.id] = articleComments;
-      }
-      if(comments !== undefined){
-        return {...comments, ...articlesWithComments}
-      } else {
-        return articlesWithComments;
-      }
-    },
-    enabled: currentPaginationData?.length > 0 // The query will not execute until the articleIds?.length > 0 is true
-  });
+  const {comments, commentsError, refetchComments} = getCommentsAPI(currentPaginationData)
 
 
   useEffect(() => {
