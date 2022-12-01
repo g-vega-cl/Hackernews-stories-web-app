@@ -1,112 +1,73 @@
+
 # Hackernews-stories-web-app
- web application that will print the title of the top 30 hacker news stories and the top 10 commenter names of these stories with the total number of comments that they posted (only for these 30 stories).
 
+This web application prints the title of the top 30 hacker news stories and the top 10 commenter names of these stories with the total number of comments that they posted (only for these 30 stories).
+
+  
 ## Definitions
-Stories that are dead or deleted will not be counted.
-The top stories could be defined as:
-1. Stories with the highest score. <- I'll use this one because it's easier to sort.
-2. Most comments.
-There is no need to worry, because hackerrank already does this for us! - 
-    - I still need to sort the ones I get. BUUUT I THINK THEY ARE ALREADY SORTED.
+### What is a top story?
+The Hacker News API provides two endpoints to get the top stories. `/v0/topstories` and `/v0/beststories`, the former gets the top new stories and the latter gets the top stories of all time.
+In this repo we use the `/v0/beststories` endpoint to get the best stories of all time.
 
-New, Top and Best Stories
-Up to 500 top and new stories are at /v0/topstories (also contains jobs) and /v0/newstories. Best stories are at /v0/beststories.
-Example: https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty
-It seems like we can limit the stories to fetch with: (https://github.com/jsuau/hacker-news-api)
-    Simply add these parameters to your query and specify the number you wish to limit your response by.
-    Path parameters
-    Name	Value	Description
-    limitToFirst	50	Limits the response to first 50 stories.
-    orderBy	$priority	Orders stories by priority in a descending order.
-    Sample request
+We also use the `&orderBy="$priority"&limitToFirst=30` queries to get the stories pre-sorted and limit the query to 30 stories.
 
-    curl -X GET https://hacker-news.firebaseio.com/v0/beststories.json?print=pretty&orderBy="$priority"&limitToFirst=50
-    Sample response
+Note:
+* Other definitions of what constitutes a top story could be used, like a story with the most comments. 
+* Stories that are dead or deleted will not be shown.
 
-    NOTE: taking beststories without any orderby or orderby "$key" (they are the same), are NOT orderded by:
-        * Alphabetical title
-        * Alphabetical author.
-        * Score - BUT IT SEEMS THAT IT DOES HAVE A BIG EFFECT. It seems to be a combination of score, descendants and kids. 
-        * Descendants
-        * Kids
-        * Time
+### What is a top commenter?
+  
+We found two ways to define what a top commenter is: 
+* The user with the highest karma. 
+* The user with the most amount of comments in a post.
 
-    By "$priority" it seems like score is indeed the order. confirm it.
-        90% sure, I'll go for this. (Confirm later in code.)
-    
-    orderyby documentation is from firebase: https://firebase.google.com/docs/firestore/query-data/order-limit-data
-        https://firebase.google.com/docs/database/rest/retrieve-data#limit-queries
+In this blog we used the former definition, and this will be complimented by showing the total number of comments each commenter has per article.
+  
+  
+## Time and Space complexity.
 
-    NOTE ON NOTE: After all, ordering by priority is fine: See link avobe, in the official firebase docs /retrieve-data#limit-queries
-        NOTE: YOU SHOULD NOT ORDER BY PRIORITY: https://stackoverflow.com/questions/31577915/what-does-priority-mean-in-firebase
+Our program works in 3 steps:
+1. Get the best articles IDs.
+	* To get the article information, we need to fetch the best stories from the Hacker News API in O(n) time and space complexity.
+2. Get each article's information.
+	* To get the articles themselves, we go through the each article's ID, and fetch the data from the API, this is O(n) time and space complexity.
+3. Get the comments for each article.
+	*	Then for each article, we need to get all of it's comments, this is [O(n2)](https://www.freecodecamp.org/news/big-o-notation-why-it-matters-and-why-it-doesnt-1674cfa8a23c/) time and space complexity. A giveaway of this is the nested for loop in the `getCommentsAPI` function.
 
-    This one works: https://hacker-news.firebaseio.com/v0/beststories.json?print=pretty&orderBy=%22$key%22&limitToFirst=30 instead of priority
-        It's not sorted numerically by ID,
-            DIG AND SEE IF IT'S SORTED BY STORY SCORE OR ALPHABETICAL OR WHAT? 
+## Optimization:
 
+The optimizations that were used in this repo are:
 
-A top commenter could be defined as:
-1. The highest karma. <- I will use this one because it's easier??? WILL I???
-    * I would need to go through each story's kids -> order by karma: kids.sort((a,b) a.karma - b.karma) <- BUT WE NEED TO FETCH THE KIDS FIRST.
-2. The highest number of comments in an article. <- I will also implement this one, probably using a button. Because even though the karma way is easier, this feels better as a design perspective.
-    * I would need to make a count of how many times a user appears. kids for ((kid) => fetch(kid), kidSet = commenterName: timesSeen)  newSet.sort()
-    WE NEED THE TOTAL NUMBER OF COMMENTS EACH COMMENTED, so use #2.
+1. **Cache** We cache the article and comment data locally using [React Query](https://tanstack.com/query/v4). 
+We also persist the article IDs for 48 hours using local storage. We chose this interval because we are fetching the best articles of all time, and the list does not change frequently, so a new query every 48 hours diminishes the pressure on the server.
 
-
-COMMENT ON O(n) time and space
-    
-
-
-
-In the hackernews documentation they mention: "Want to know the total number of comments on an article? Traverse the tree and count."
-descendants:	In the case of stories or polls, the total comment count.
-All stories, comments, asks, polls, and jobs are under the `/item/` url.
-
-All users live under `/v0/user/`
-
-
-To discover all items:
-The current largest item id is at /v0/maxitem. You can walk backward from here to discover all items.
-Example: https://hacker-news.firebaseio.com/v0/maxitem.json?print=pretty
-## Steps taken:
-1. Create boilerplate.
-
-* Optimization Notes:
-    1. We can cache. And should cache. - Use React query library. (How query cache works: https://www.youtube.com/watch?v=2TX8ojaSwF0)
-    2. Lazy loading? I say yes. Use pagination, show 10 articles per page. - Depends. It might add complexity to the code where it is not needed.
-2. Fetch data.
-    * Fetch stories.
-        1. Hackerstories provides us with a "beststories" endpoint, and firebase provides us with a "priortity" orderBy, which orders stories by score.
-        This means that using the following endpoint we can retrieve only the top 30 stories (sorted): https://hacker-news.firebaseio.com/v0/beststories.json?print=pretty&orderBy=%22$key%22&limitToFirst=30
-            O(1) or O(n) - Not our problem, since we are retrieving from hackerrank.
-        2. Now that we have the IDs, get the title of each story.
-
-
-    * Get top commenters.
-        1. Go through the kids in each story, create a set with the commenterName: {number-of-times-commented}. O(n)
-        2. 
-
-    
-
-3. Display data.
-
-
+3. **Lazy loading**: We use lazy loading when fetching comments because we use pagination and show from 3 to 15 articles per page, this way the user only fetches the data needed for the page they are looking at.
+  
 # FAQ
-How do you get react query to call data after calling data:
-https://stackoverflow.com/questions/60260704/how-to-fetch-n-dependent-data-with-react-query
-Dependent queries:
-    https://tanstack.com/query/v4/docs/guides/dependent-queries?from=reactQueryV3&original=https://react-query-v3.tanstack.com/guides/dependent-queries#_top
+  
+**Why did you fetch all article data up-front?**
 
-Why did you fetch all data up-front?
-    * Because I think users prefer a large(ish) wait at the beginning, and then fast navigation. I know there are articles that say that the longer the page takes to load the 
-        less conversion, but I think that users with slow internet that would like to see the top articles don't mind waiting. Think, who was really slow internet and wants to see article information?
-        And I mitigated the wait with a pretty loading animation / progress bar.
+* Because I think users prefer a bigger wait at the beginning, and then fast navigation. 
+	* Note: [There are articles](https://www.portent.com/blog/analytics/research-site-speed-hurting-everyones-revenue.htm) that long loading times hurt conversion, but I think that users with slow internet that would like to see the top articles don't mind waiting. 
+Also, I mitigated the wait with a pretty loading page with fun facts.
 
-Is there any further optimization to do?
-    * Decrease bundle size.
-    * If we wanted to fetch more data,
-        1. Have your own server.
-        2. Create a background process that throttles requests and fetches and chaches continiously.
-    * Configure webpack to fix the automatic .tsx import.
 
-Limitations. Some comments also have kids of their own, I would need to create a function that also fetches and counts and caches those kids, and those kids kids. I don't wanna. Just top-level comments.
+**Is there any further optimization to do?**
+
+* Decrease bundle size.
+	* This helps to decrease the loading time for the first page view.
+
+* If we wanted to fetch more data:
+	* We could have our own database and server, we could even use a framework like [next.js to use static generation or server-side rendering](https://nextjs.org/learn/basics/data-fetching/two-forms)
+
+* Create a background process continuously fetches for data. 
+	* This way, even if the user is only looking at the first page, the data for the other pages will be ready before the user asks for them.
+
+* Configure our code to fix the automatic .tsx import.
+	* At the moment our code needs imports to use `.tsx` extension. This could be annoying, and should be fixed.
+
+* Add CI/CD and automatic linters.
+	* We can use tools like husky and/or GitHub actions to make sure our tests pass and our code is clean before merging.
+
+ **Are there any limitations?**
+* Some comments have comments of their own, we could use the `getCommentsAPI` function to fetch them as well, and count them towards the total comment count. I decided against this because that would mean fetching too much data from the api. And I don't think this is part of the scope of this project.

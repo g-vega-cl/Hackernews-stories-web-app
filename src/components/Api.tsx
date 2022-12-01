@@ -5,7 +5,7 @@ export const getArticlesAPI = () => {
     // This is cached and saved locally for 24h
   const { isLoading: isLoadingArticleIds, data: articleIds } = useQuery({queryKey:["hackerNews-article-ids"], queryFn:() => {
     return axios
-      .get("https://hacker-news.firebaseio.com/v0/beststories.json?print=pretty&orderBy=%22$key%22&limitToFirst=30")
+      .get("https://hacker-news.firebaseio.com/v0/beststories.json?print=pretty&orderBy=%22$priority%22&limitToFirst=30")
       .then((res) => res.data)
     },
     refetchOnWindowFocus: false,

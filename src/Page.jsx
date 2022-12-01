@@ -8,7 +8,7 @@ import LoadingPage from "./components/LoadingPage.tsx";
 import ErrorPage from "./components/ErrorPage.tsx";
 
 
-const PAGE_SIZES = [3, 5, 10];
+const PAGE_SIZES = [3, 5, 10, 15];
 
 const Page = () => {
   const {articles, isLoadingArticles, isLoadingArticleIds, articlesError} = getArticlesAPI();
