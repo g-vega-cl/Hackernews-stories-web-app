@@ -71,5 +71,7 @@ Also, I mitigated the wait with a pretty loading page with fun facts.
 * Add CI/CD and automatic linters.
 	* We can use tools like husky and/or GitHub actions to make sure our tests pass and our code is clean before merging.
 
+* Instead of using Promise.all() we could use use Promise.allSettled(), but I have not used before and I decided not to try it now because of time constraints and possible bugs.
+
  **Are there any limitations?**
 * Some comments have comments of their own, we could use the `getCommentsAPI` function to fetch them as well, and count them towards the total comment count. I decided against this because that would mean fetching too much data from the api. And I don't think this is part of the scope of this project.
